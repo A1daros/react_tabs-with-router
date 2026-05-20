@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { Tab } from "../../types/Tab";
 
 type Props = {
@@ -8,6 +8,7 @@ type Props = {
 
 export const Tabs: React.FC<Props> = ({ tabs }) => {
   const { tabId } = useParams();
+  const { pathname } = useLocation();
   const activeTab = tabs.find((tab) => tab.id === tabId);
   const isTabInvalid = !tabId || !activeTab;
 
@@ -15,17 +16,22 @@ export const Tabs: React.FC<Props> = ({ tabs }) => {
     <div data-cy="TabsComponent">
       <div className="tabs is-boxed">
         <ul>
-          {tabs.map((tab) => (
-            <li
-              className={tab.id === activeTab?.id ? "is-active" : ""}
-              data-cy="Tab"
-              key={tab.id}
-            >
-              <NavLink to={`/tabs/${tab.id}`} data-cy="TabLink">
-                {tab.title}
-              </NavLink>
-            </li>
-          ))}
+          {tabs.map((tab) => {
+            const targetPath = `/tabs/${tab.id}`;
+            const isActive = pathname === targetPath;
+
+            return (
+              <li
+                className={isActive ? "is-active" : ""}
+                data-cy="Tab"
+                key={tab.id}
+              >
+                <Link to={targetPath} data-cy="TabLink">
+                  {tab.title}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
 
